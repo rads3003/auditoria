@@ -6,9 +6,15 @@
     <title>Securitas Audit Tool - Edición Profesional</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Librerías corregidas para evitar errores de sintaxis 'export' -->
-    <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js"></script>
+
+    <!-- Carga correcta de docx (versión moderna compatible con browser) -->
+    <script type="module">
+        import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, ImageRun, UnderlineType } from 'https://cdn.jsdelivr.net/npm/docx@9.5.1/+esm';
+        window.docx = { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, ImageRun, UnderlineType };
+    </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -239,10 +245,10 @@
             const type = activeTabId;
             html = formData[type].map((item, i) => `
                 <div class="card-dynamic">
-                    <div class="flex justify-between mb-4"><span class="font-black text-black uppercase">${type.slice(0,-1)} #${i+1}</span>${i > 0 ? `<button onclick="removeItem('${type}', ${i})" class="text-red-600 font-bold">X</button>` : ''}</div>
+                    <div class="flex justify-between mb-4"><span class="font-black text-black uppercase">${type === 'hallazgos' ? 'HALLAZGO' : 'RECOMENDACIÓN'} #${i+1}</span>${i > 0 ? `<button onclick="removeItem('${type}', ${i})" class="text-red-600 font-bold">X</button>` : ''}</div>
                     <div class="space-y-4">
                         ${type === 'hallazgos' ? `<input type="text" placeholder="Título del hallazgo" value="${item.titulo}" oninput="updateItemField('${type}', ${i}, 'titulo', this.value)" class="input-field">` : ''}
-                        <textarea placeholder="Detalle técnico..." oninput="updateItemField('${type}', ${i}, 'descripcion', this.value)" class="input-field h-24 resize-none">${item.descripcion}</textarea>
+                        <textarea placeholder="Detalle técnico..." oninput="updateItemField('${type}', ${i}, 'descripcion', this.value)" class="input-field h-24 resize-none">${item.descripcion || ''}</textarea>
                         
                         <div class="space-y-2 mt-4">
                             <label class="text-[10px] uppercase font-black tracking-widest block text-red-600">Evidencia Fotográfica</label>
@@ -263,27 +269,25 @@
                         </div>
                     </div>
                 </div>
-            `).join('') + `<button onclick="addItem('${type}')" class="w-full border-2 border-black py-4 rounded-xl font-black shadow-md hover:bg-slate-50 transition-all uppercase">+ AGREGAR ${activeTabId.slice(0,-1)}</button>`;
-        } else {
+            `).join('') + `<button onclick="addItem('${type}')" class="w-full border-2 border-black py-4 rounded-xl font-black shadow-md hover:bg-slate-50 transition-all uppercase">+ AGREGAR ${activeTabId === 'hallazgos' ? 'HALLAZGO' : 'RECOMENDACIÓN'}</button>`;
+        } else if (activeTabId === 'conclusion') {
             html = `<textarea oninput="formData.conclusion.texto = this.value" class="input-field h-[400px] resize-none text-lg">${formData.conclusion.texto}</textarea>`;
         }
+
         container.innerHTML = html;
         lucide.createIcons();
     }
 
-    // FUNCIÓN DE DESCARGA CORREGIDA PARA CDN JAVASCRIPT GLOBAL
     async function generateDoc() {
         const btn = document.getElementById('btn-download');
         const originalContent = btn.innerHTML;
-        
-        // La librería cargada vía JSDelivr expone el objeto global 'docx'
-        const docxLib = window.docx;
-        if (!docxLib) {
-            alert("Error: La librería de documentos no está lista. Por favor, espere unos segundos o verifique su conexión a internet.");
+
+        if (!window.docx) {
+            alert("La librería docx aún se está cargando. Por favor, espera unos segundos e inténtalo de nuevo.");
             return;
         }
 
-        const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, ImageRun, BorderStyle, UnderlineType } = docxLib;
+        const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, ImageRun, UnderlineType } = window.docx;
 
         btn.innerHTML = '<span class="animate-pulse">PROCESANDO...</span>';
         btn.disabled = true;
@@ -298,20 +302,20 @@
                 spacing: { after: 400 }
             }));
 
-            // Tabla de datos generales
+            // Tabla datos generales
             children.push(new Table({
                 width: { size: 100, type: WidthType.PERCENTAGE },
                 rows: [
                     ["Nombre de la Empresa de Seguridad:", formData.general.empresa],
-                    ["Nombre de la Instalación:", formData.general.instalacion],
-                    ["Ciudad / Comuna:", formData.general.ciudad],
-                    ["Fecha de Emisión:", formData.general.fecha],
-                    ["Trabajo de Campo:", formData.general.tecnico],
-                    ["Análisis y Elaboración de Informe:", formData.general.elaborador]
+                    ["Nombre de la Instalación:", formData.general.instalacion || ''],
+                    ["Ciudad / Comuna:", formData.general.ciudad || ''],
+                    ["Fecha de Emisión:", formData.general.fecha || ''],
+                    ["Trabajo de Campo:", formData.general.tecnico || ''],
+                    ["Análisis y Elaboración de Informe:", formData.general.elaborador || '']
                 ].map(pair => new TableRow({
                     children: [
-                        new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: pair[0], bold: true, size: 20 })] })], width: { size: 40, type: WidthType.PERCENTAGE }, borders: { top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE }, left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE } } }),
-                        new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: pair[1] || "", size: 20 })] })], width: { size: 60, type: WidthType.PERCENTAGE }, borders: { top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE }, left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE } } })
+                        new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: pair[0], bold: true, size: 20 })] })] }),
+                        new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: pair[1], size: 20 })] })] })
                     ]
                 }))
             }));
@@ -321,7 +325,7 @@
             // Objetivos
             children.push(new Paragraph({ children: [new TextRun({ text: "OBJETIVO DEL INFORME", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { after: 150 } }));
             children.push(new Paragraph({ text: formData.objetivos.principal, alignment: AlignmentType.BOTH, spacing: { after: 300 } }));
-            
+
             children.push(new Paragraph({ children: [new TextRun({ text: "OBJETIVOS ESPECÍFICOS", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { after: 150 } }));
             formData.objetivos.especificos.split('\n').filter(l => l.trim()).forEach(line => {
                 children.push(new Paragraph({ 
@@ -331,21 +335,18 @@
                 }));
             });
 
-            // Análisis de Riesgo
+            // Análisis de riesgos con criticidad calculada
             children.push(new Paragraph({ children: [new TextRun({ text: "ANÁLISIS DE RIESGOS", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 400, after: 200 } }));
 
             function getCriticidad(impacto, probabilidad) {
-                const impactMap = { 'Bajo': 1, 'Medio': 2, 'Alto': 3 };
-                const probMap = { 'Baja': 1, 'Media': 2, 'Alta': 3 };
-                const impactNum = impactMap[impacto] || 1;
-                const probNum = probMap[probabilidad] || 1;
-                const risk = impactNum * probNum;
+                const map = { 'Bajo': 1, 'Baja': 1, 'Medio': 2, 'Media': 2, 'Alto': 3, 'Alta': 3 };
+                const risk = (map[impacto] || 1) * (map[probabilidad] || 1);
                 if (risk >= 6) return 'Alta';
                 if (risk >= 4) return 'Media';
                 return 'Baja';
             }
 
-            function getShading(criticidad) {
+            function getColor(criticidad) {
                 if (criticidad === 'Alta') return 'FFCCCC';
                 if (criticidad === 'Media') return 'FFFFCC';
                 return 'CCFFCC';
@@ -360,12 +361,15 @@
                             shading: { fill: "D9D9D9" }
                         }))
                     }),
-                    ...formData.analisis.map(a => new TableRow({
+                    ...formData.analisis.filter(a => a.amenazas.trim()).map(a => new TableRow({
                         children: [
-                            new TableCell({ children: [new Paragraph({ text: a.amenazas || "Sin definir", size: 18 })] }),
+                            new TableCell({ children: [new Paragraph({ text: a.amenazas, size: 18 })] }),
                             new TableCell({ children: [new Paragraph({ text: a.impacto, size: 18, alignment: AlignmentType.CENTER })] }),
                             new TableCell({ children: [new Paragraph({ text: a.probabilidad, size: 18, alignment: AlignmentType.CENTER })] }),
-                            new TableCell({ children: [new Paragraph({ text: getCriticidad(a.impacto, a.probabilidad), size: 18, bold: true, alignment: AlignmentType.CENTER })], shading: { fill: getShading(getCriticidad(a.impacto, a.probabilidad)) } })
+                            new TableCell({ 
+                                children: [new Paragraph({ text: getCriticidad(a.impacto, a.probabilidad), size: 18, bold: true, alignment: AlignmentType.CENTER })], 
+                                shading: { fill: getColor(getCriticidad(a.impacto, a.probabilidad)) } 
+                            })
                         ]
                     }))
                 ]
@@ -373,69 +377,55 @@
 
             // Hallazgos
             children.push(new Paragraph({ children: [new TextRun({ text: "HALLAZGOS TÉCNICOS Y EVIDENCIAS", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 500, after: 200 } }));
-            for (const h of formData.hallazgos) {
+            formData.hallazgos.forEach(h => {
                 if (h.titulo || h.descripcion || h.fotos.length > 0) {
-                    children.push(new Paragraph({ children: [new TextRun({ text: h.titulo || "Observación", bold: true, size: 20 })], spacing: { before: 200 } }));
-                    children.push(new Paragraph({ text: h.descripcion || "", alignment: AlignmentType.BOTH, spacing: { after: 200 } }));
-                    
-                    for (const f of h.fotos) {
+                    if (h.titulo) children.push(new Paragraph({ children: [new TextRun({ text: h.titulo, bold: true, size: 20 })], spacing: { before: 200 } }));
+                    if (h.descripcion) children.push(new Paragraph({ text: h.descripcion, alignment: AlignmentType.BOTH, spacing: { after: 200 } }));
+                    h.fotos.forEach(f => {
                         try {
-                            const base64Data = f.split(',')[1];
-                            const binaryData = atob(base64Data);
-                            const bytes = new Uint8Array(binaryData.length);
-                            for (let i = 0; i < binaryData.length; i++) bytes[i] = binaryData.charCodeAt(i);
-                            
-                            children.push(new Paragraph({ 
-                                alignment: AlignmentType.CENTER, 
-                                children: [new ImageRun({ data: bytes, transformation: { width: 450, height: 280 } })], 
-                                spacing: { after: 200 } 
+                            const base64 = f.split(',')[1];
+                            const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+                            children.push(new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [new ImageRun({ data: bytes, transformation: { width: 450, height: 300 } })],
+                                spacing: { after: 300 }
                             }));
-                        } catch (e) { console.error("Fallo imagen hallazgo", e); }
-                    }
+                        } catch (e) { console.error("Error imagen hallazgo", e); }
+                    });
                 }
-            }
+            });
 
             // Recomendaciones
             children.push(new Paragraph({ children: [new TextRun({ text: "RECOMENDACIONES", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 400, after: 200 } }));
-            for (const r of formData.recomendaciones) {
+            formData.recomendaciones.forEach(r => {
                 if (r.descripcion || r.fotos.length > 0) {
-                    children.push(new Paragraph({ children: [new TextRun({ text: "• ", bold: true }), new TextRun(r.descripcion || "")], spacing: { after: 150 }, alignment: AlignmentType.BOTH }));
-                    for (const f of r.fotos) {
+                    if (r.descripcion) children.push(new Paragraph({ children: [new TextRun({ text: "• ", bold: true }), new TextRun(r.descripcion)], alignment: AlignmentType.BOTH, spacing: { after: 150 } }));
+                    r.fotos.forEach(f => {
                         try {
-                            const base64Data = f.split(',')[1];
-                            const binaryData = atob(base64Data);
-                            const bytes = new Uint8Array(binaryData.length);
-                            for (let i = 0; i < binaryData.length; i++) bytes[i] = binaryData.charCodeAt(i);
-                            
-                            children.push(new Paragraph({ 
-                                alignment: AlignmentType.CENTER, 
-                                children: [new ImageRun({ data: bytes, transformation: { width: 400, height: 250 } })], 
-                                spacing: { after: 200 } 
+                            const base64 = f.split(',')[1];
+                            const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+                            children.push(new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [new ImageRun({ data: bytes, transformation: { width: 400, height: 250 } })],
+                                spacing: { after: 200 }
                             }));
-                        } catch (e) { console.error("Fallo imagen rec", e); }
-                    }
+                        } catch (e) { console.error("Error imagen recomendación", e); }
+                    });
                 }
-            }
+            });
 
             // Conclusión
             children.push(new Paragraph({ children: [new TextRun({ text: "CONCLUSIÓN", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 400, after: 200 } }));
             children.push(new Paragraph({ text: formData.conclusion.texto, alignment: AlignmentType.BOTH }));
 
-            // Crear documento final
-            const doc = new Document({ 
-                sections: [{ properties: {}, children: children }] 
-            });
-
-            // Generar Blob usando Packer
+            const doc = new Document({ sections: [{ properties: {}, children }] });
             const blob = await Packer.toBlob(doc);
-            
-            // Descargar usando FileSaver
-            const filename = `Informe_Auditoria_${(formData.general.instalacion || 'Securitas').replace(/\s+/g, '_')}.docx`;
-            window.saveAs(blob, filename);
+            const filename = `Informe_Auditoria_${(formData.general.instalacion || 'Securitas').replace(/\s+/g, '_')}_${formData.general.fecha.replace(/\//g, '-')}.docx`;
+            saveAs(blob, filename);
 
         } catch (err) {
             console.error("ERROR GENERACIÓN:", err);
-            alert("No se pudo generar el documento. Revise la consola para más detalles.");
+            alert("Error al generar el documento. Revisa la consola para más detalles.");
         } finally {
             btn.innerHTML = originalContent;
             btn.disabled = false;
