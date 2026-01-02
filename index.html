@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Securitas Audit Tool - Edición Profesional</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/docx@8.2.2/build/index.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .active-tab {
+      background-color: #000000;
+      color: white;
+      border-radius: 0.75rem;
+    }
+
+    .input-field {
+      background-color: #ffffff;
+      border: 2px solid #000000;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+      width: 100%;
+      font-weight: 600;
+      color: #000000;
+      transition: all 0.2s;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #ef4444;
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    }
+
+    .nav-item {
+      transition: all 0.2s;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #000000;
+    }
+
+    .nav-item:hover {
+      background-color: #f1f5f9;
+      border-radius: 0.75rem;
+    }
+
+    label {
+      color: #000000 !important;
+      font-weight: 800 !important;
+    }
+
+    .card-dynamic {
+      border-left: 8px solid #ef4444;
+      background: #ffffff;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      margin-bottom: 1.5rem;
+      border: 2px solid #000000;
+      border-left-width: 8px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Botón de fotos optimizado con tamaño reducido */
+    .btn-photo-upload {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background-color: #ef4444;
+      color: #ffffff;
+      padding: 0.6rem 1.25rem;
+      /* Relleno reducido */
+      border-radius: 0.5rem;
+      font-weight: 800;
+      font-size: 0.75rem;
+      /* Fuente más pequeña */
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid #b91c1c;
+      width: auto;
+      /* Ya no es de ancho completo por defecto */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-photo-upload:hover {
+      background-color: #dc2626;
+      transform: translateY(-1px);
+    }
+
+    .btn-photo-upload:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+
+<body class="bg-slate-100 text-slate-900">
+
+  <div id="app" class="min-h-screen flex flex-col md:flex-row">
+    <!-- Sidebar -->
+    <aside class="w-full md:w-80 bg-white border-r border-slate-300 flex flex-col shrink-0">
+      <div class="p-6 border-b border-slate-200 flex items-center gap-3">
+        <div class="bg-red-600 p-2 rounded-lg text-white">
+          <i data-lucide="shield" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-black text-lg leading-none uppercase tracking-tight">Securitas</h1>
+          <p class="text-[10px] text-red-600 font-black tracking-widest uppercase mt-1">Minuta de Auditoría ETAC</p>
+        </div>
+      </div>
+
+      <nav id="sidebar-nav" class="flex-1 p-4 space-y-1">
+        <!-- Navegación JS -->
+      </nav>
+
+      <div class="p-4 border-t border-slate-200">
+        <button onclick="generateDoc()" id="btn-download" class="w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-xl font-black text-sm flex items-center justify-center gap-3 transition-all active:scale-95 shadow-xl shadow-red-200">
+                <i data-lucide="file-check" class="w-5 h-5"></i>
+                <span>DESCARGAR INFORME DOCX</span>
+            </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+      <div class="max-w-4xl mx-auto">
+        <div class="mb-8 flex justify-between items-end">
+          <div>
+            <span id="tab-category" class="text-red-600 font-black text-xs tracking-widest uppercase bg-red-100 px-3 py-1 rounded-full border border-red-200">MODO EDICIÓN PROFESIONAL</span>
+            <h2 id="current-tab-title" class="text-4xl font-black text-black mt-2">Datos de Instalación</h2>
+          </div>
+          <div id="tab-counter" class="text-6xl font-black text-slate-300 tabular-nums">01</div>
+        </div>
+
+        <div class="bg-white rounded-[2rem] p-8 shadow-2xl border border-slate-200 min-h-[600px] flex flex-col">
+          <div id="form-container" class="flex-1">
+            <!-- Formulario dinámico -->
+          </div>
+
+          <div class="mt-8 flex justify-between pt-8 border-t border-slate-200">
+            <button id="btn-prev" onclick="changeTab(-1)" class="flex items-center gap-2 text-black font-black text-sm uppercase hover:translate-x-[-4px] transition-all">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i> Anterior
+                    </button>
+            <button id="btn-next" onclick="changeTab(1)" class="bg-black hover:bg-slate-800 text-white px-10 py-4 rounded-2xl font-black text-sm uppercase flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-slate-300">
+                        Siguiente <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    let activeTabId = 'general';
+    let formData = {
+        general: { empresa: 'Securitas S.A.', instalacion: '', ciudad: '', fecha: new Date().toLocaleDateString('es-ES'), tecnico: '', elaborador: '' },
+        objetivos: { 
+            principal: 'Evaluar integralmente las condiciones de seguridad física en servicio operativos, con el propósito de identificar vulnerabilidades, amenazas y el nivel de riesgo, para diseñar medidas de mitigación efectivas que aseguren la protección del personal, los activos críticos y la continuidad operativa de las instalaciones.',
+            especificos: 'Detectar áreas críticas y sensibles dentro de las instalaciones.\nAnalizar amenazas de origen externo, interno y ambiental.\nEvaluar la eficacia de la seguridad física y tecnológica existente.\nElaborar un matriz de análisis de riesgos.\nProponer medidas de mitigación específicas y realistas.'
+        },
+        analisis: [{ amenazas: '', impacto: 'Alto', probabilidad: 'Media' }],
+        hallazgos: [{ titulo: '', descripcion: '', fotos: [] }],
+        recomendaciones: [{ descripcion: '', fotos: [] }],
+        conclusion: { texto: 'El análisis de seguridad física realizado identificó vulnerabilidades vinculadas principalmente a riesgos de intrusión y robo planificado. Si bien el sitio presenta avances, aún persiste exposición en puntos claves. La implementación de las medidas propuestas permitirá elevar el nivel de protección a estándar industrial seguro.' }
+    };
+
+    const SECTIONS = [
+        { id: 'general', title: 'Datos Generales', icon: 'info' },
+        { id: 'objetivos', title: 'Objetivos', icon: 'target' },
+        { id: 'analisis', title: 'Análisis de Riesgo', icon: 'alert-triangle' },
+        { id: 'hallazgos', title: 'Hallazgos Técnicos', icon: 'search' },
+        { id: 'recomendaciones', title: 'Recomendaciones', icon: 'lightbulb' },
+        { id: 'conclusion', title: 'Conclusión', icon: 'check-circle' }
+    ];
+
+    window.onload = () => { renderSidebar(); renderForm(); };
+
+    function renderSidebar() {
+        const nav = document.getElementById('sidebar-nav');
+        nav.innerHTML = SECTIONS.map(s => `
+            <div onclick="setTab('${s.id}')" class="nav-item ${activeTabId === s.id ? 'active-tab shadow-lg' : ''}">
+                <i data-lucide="${s.icon}" class="w-5 h-5 ${activeTabId === s.id ? 'text-red-400' : 'text-black'}"></i>
+                ${s.title}
+            </div>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    function setTab(id) { activeTabId = id; renderSidebar(); renderForm(); updateUI(); }
+    function changeTab(dir) {
+        const idx = SECTIONS.findIndex(s => s.id === activeTabId);
+        const next = idx + dir;
+        if (next >= 0 && next < SECTIONS.length) setTab(SECTIONS[next].id);
+    }
+
+    function updateUI() {
+        const idx = SECTIONS.findIndex(s => s.id === activeTabId);
+        document.getElementById('current-tab-title').innerText = SECTIONS[idx].title;
+        document.getElementById('tab-counter').innerText = (idx + 1).toString().padStart(2, '0');
+        document.getElementById('btn-prev').classList.toggle('invisible', idx === 0);
+        document.getElementById('btn-next').innerText = idx === SECTIONS.length - 1 ? 'GENERAR INFORME' : 'CONTINUAR';
+    }
+
+    function addItem(type) {
+        if (type === 'analisis') formData.analisis.push({ amenazas: '', impacto: 'Alto', probabilidad: 'Media' });
+        if (type === 'hallazgos') formData.hallazgos.push({ titulo: '', descripcion: '', fotos: [] });
+        if (type === 'recomendaciones') formData.recomendaciones.push({ descripcion: '', fotos: [] });
+        renderForm();
+    }
+
+    function removeItem(type, index) {
+        formData[type].splice(index, 1);
+        if (formData[type].length === 0) addItem(type);
+        renderForm();
+    }
+
+    function updateItemField(type, index, field, value) { formData[type][index][field] = value; }
+
+    function handlePhotoUpload(type, index, e) {
+        const files = Array.from(e.target.files);
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                formData[type][index].fotos.push(ev.target.result);
+                renderForm();
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function removePhoto(type, itemIdx, photoIdx) {
+        formData[type][itemIdx].fotos.splice(photoIdx, 1);
+        renderForm();
+    }
+
+    function renderForm() {
+        const container = document.getElementById('form-container');
+        let html = '';
+
+        if (activeTabId === 'general') {
+            html = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-3"><label class="text-xs uppercase">INSTALACIÓN</label><input type="text" value="${formData.general.instalacion}" oninput="formData.general.instalacion = this.value" class="input-field"></div>
+                    <div class="space-y-3"><label class="text-xs uppercase">CIUDAD / COMUNA</label><input type="text" value="${formData.general.ciudad}" oninput="formData.general.ciudad = this.value" class="input-field"></div>
+                    <div class="space-y-3"><label class="text-xs uppercase">TRABAJO DE CAMPO</label><input type="text" value="${formData.general.tecnico}" oninput="formData.general.tecnico = this.value" class="input-field"></div>
+                    <div class="space-y-3"><label class="text-xs uppercase">ANÁLISIS Y ELABORACIÓN</label><input type="text" value="${formData.general.elaborador}" oninput="formData.general.elaborador = this.value" class="input-field"></div>
+                    <div class="space-y-3"><label class="text-xs uppercase">FECHA</label><input type="text" value="${formData.general.fecha}" oninput="formData.general.fecha = this.value" class="input-field"></div>
+                </div>
+            `;
+        } else if (activeTabId === 'objetivos') {
+            html = `
+                <div class="space-y-6">
+                    <div class="space-y-2"><label class="text-xs uppercase">OBJETIVO GENERAL</label><textarea oninput="formData.objetivos.principal = this.value" class="input-field h-32 resize-none">${formData.objetivos.principal}</textarea></div>
+                    <div class="space-y-2"><label class="text-xs uppercase">OBJETIVOS ESPECÍFICOS (UNO POR LÍNEA)</label><textarea oninput="formData.objetivos.especificos = this.value" class="input-field h-48 resize-none">${formData.objetivos.especificos}</textarea></div>
+                </div>
+            `;
+        } else if (activeTabId === 'analisis') {
+            html = formData.analisis.map((item, i) => `
+                <div class="card-dynamic">
+                    <div class="flex justify-between mb-4"><span class="font-black text-black uppercase">AMENAZA / RIESGO #${i+1}</span>${i > 0 ? `<button onclick="removeItem('analisis', ${i})" class="text-red-600 font-bold">X</button>` : ''}</div>
+                    <div class="space-y-4">
+                        <input type="text" value="${item.amenazas}" oninput="updateItemField('analisis', ${i}, 'amenazas', this.value)" class="input-field" placeholder="Describa la amenaza">
+                        <div class="grid grid-cols-2 gap-4">
+                            <select onchange="updateItemField('analisis', ${i}, 'impacto', this.value)" class="input-field"><option ${item.impacto === 'Bajo' ? 'selected' : ''}>Bajo</option><option ${item.impacto === 'Medio' ? 'selected' : ''}>Medio</option><option ${item.impacto === 'Alto' ? 'selected' : ''}>Alto</option></select>
+                            <select onchange="updateItemField('analisis', ${i}, 'probabilidad', this.value)" class="input-field"><option ${item.probabilidad === 'Baja' ? 'selected' : ''}>Baja</option><option ${item.probabilidad === 'Media' ? 'selected' : ''}>Media</option><option ${item.probabilidad === 'Alta' ? 'selected' : ''}>Alta</option></select>
+                        </div>
+                    </div>
+                </div>
+            `).join('') + `<button onclick="addItem('analisis')" class="w-full border-2 border-black py-4 rounded-xl font-black">+ AGREGAR RIESGO</button>`;
+        } else if (activeTabId === 'hallazgos' || activeTabId === 'recomendaciones') {
+            const type = activeTabId;
+            html = formData[type].map((item, i) => `
+                <div class="card-dynamic">
+                    <div class="flex justify-between mb-4"><span class="font-black text-black uppercase">${type.slice(0,-1)} #${i+1}</span>${i > 0 ? `<button onclick="removeItem('${type}', ${i})" class="text-red-600 font-bold">X</button>` : ''}</div>
+                    <div class="space-y-4">
+                        ${type === 'hallazgos' ? `<input type="text" placeholder="Título" value="${item.titulo}" oninput="updateItemField('${type}', ${i}, 'titulo', this.value)" class="input-field">` : ''}
+                        <textarea placeholder="Descripción..." oninput="updateItemField('${type}', ${i}, 'descripcion', this.value)" class="input-field h-24 resize-none">${item.descripcion}</textarea>
+                        
+                        <div class="space-y-2 mt-4">
+                            <label class="text-[10px] uppercase font-black tracking-widest block text-red-600">Adjuntar Evidencia</label>
+                            
+                            <label class="btn-photo-upload">
+                                <i data-lucide="camera" class="w-4 h-4"></i>
+                                <span>Subir fotos</span>
+                                <input type="file" multiple class="hidden" onchange="handlePhotoUpload('${type}', ${i}, event)">
+                            </label>
+                            
+                            <div class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 mt-2">
+                                ${item.fotos.map((p, pi) => `
+                                    <div class="relative aspect-square border-2 border-black rounded-lg overflow-hidden shadow-sm">
+                                        <img src="${p}" class="w-full h-full object-cover">
+                                        <button onclick="removePhoto('${type}', ${i}, ${pi})" class="absolute top-0.5 right-0.5 bg-red-600 text-white w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px]">X</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('') + `<button onclick="addItem('${type}')" class="w-full border-2 border-black py-4 rounded-xl font-black shadow-md hover:bg-slate-50 transition-all uppercase">+ AGREGAR NUEVO ${activeTabId.slice(0,-1)}</button>`;
+        } else {
+            html = `<textarea oninput="formData.conclusion.texto = this.value" class="input-field h-[400px] resize-none text-lg">${formData.conclusion.texto}</textarea>`;
+        }
+        container.innerHTML = html;
+        lucide.createIcons();
+    }
+
+    async function generateDoc() {
+        const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, ImageRun, ShadingType, BorderStyle, UnderlineType } = window.docx;
+        const btn = document.getElementById('btn-download');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'GENERANDO...';
+
+        try {
+            const children = [
+                new Paragraph({
+                    children: [new TextRun({ text: "MINUTA INFORME DE ESTADO SERVICIO", bold: true, size: 28, color: "FF0000" })],
+                    alignment: AlignmentType.LEFT,
+                    spacing: { after: 400 }
+                }),
+                
+                new Table({
+                    width: { size: 100, type: WidthType.PERCENTAGE },
+                    rows: [
+                        ["Nombre de la Empresa de Seguridad:", formData.general.empresa],
+                        ["Nombre de la Instalación:", formData.general.instalacion],
+                        ["Ciudad / Comuna:", formData.general.ciudad],
+                        ["Fecha de Emisión:", formData.general.fecha],
+                        ["Trabajo de Campo:", formData.general.tecnico],
+                        ["Análisis y Elaboración de Informe:", formData.general.elaborador]
+                    ].map(pair => new TableRow({
+                        children: [
+                            new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: pair[0], bold: true, size: 20 })] })], width: { size: 40, type: WidthType.PERCENTAGE }, borders: { top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE }, left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE } } }),
+                            new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: pair[1] || "", size: 20 })] })], width: { size: 60, type: WidthType.PERCENTAGE }, borders: { top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE }, left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE } } })
+                        ]
+                    }))
+                }),
+
+                new Paragraph({ text: "______________________________________________________________________", spacing: { before: 200, after: 400 } }),
+
+                new Paragraph({ children: [new TextRun({ text: "OBJETIVO DEL INFORME", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { after: 150 } }),
+                new Paragraph({ text: formData.objetivos.principal, alignment: AlignmentType.BOTH, spacing: { after: 300 } }),
+                
+                new Paragraph({ children: [new TextRun({ text: "OBJETIVOS ESPECÍFICOS", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { after: 150 } }),
+                ...formData.objetivos.especificos.split('\n').filter(l => l.trim()).map(line => new Paragraph({ 
+                    children: [new TextRun({ text: "• ", bold: true }), new TextRun(line.trim())],
+                    spacing: { after: 100 },
+                    alignment: AlignmentType.BOTH
+                })),
+
+                new Paragraph({ children: [new TextRun({ text: "ANÁLISIS DE RIESGOS", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 400, after: 200 } }),
+                new Table({
+                    width: { size: 100, type: WidthType.PERCENTAGE },
+                    rows: [
+                        new TableRow({
+                            children: ["Amenazas / Riesgos detectados", "Impacto potencial", "Probabilidad", "Criticidad"].map(h => new TableCell({
+                                children: [new Paragraph({ children: [new TextRun({ text: h, bold: true, size: 18 })], alignment: AlignmentType.CENTER })],
+                                shading: { fill: "D9D9D9" }
+                            }))
+                        }),
+                        ...formData.analisis.map(a => new TableRow({
+                            children: [
+                                new TableCell({ children: [new Paragraph({ text: a.amenazas, size: 18 })] }),
+                                new TableCell({ children: [new Paragraph({ text: "Daños operativos", size: 18 })] }),
+                                new TableCell({ children: [new Paragraph({ text: a.probabilidad, size: 18, alignment: AlignmentType.CENTER })] }),
+                                new TableCell({ children: [new Paragraph({ text: a.impacto, size: 18, bold: true, alignment: AlignmentType.CENTER })], shading: { fill: a.impacto === 'Alto' ? 'FFCCCC' : 'FFFFCC' } })
+                            ]
+                        }))
+                    ]
+                }),
+
+                new Paragraph({ children: [new TextRun({ text: "HALLAZGOS TÉCNICOS Y EVIDENCIAS", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 500, after: 200 } }),
+            ];
+
+            for (const h of formData.hallazgos) {
+                children.push(new Paragraph({ children: [new TextRun({ text: h.titulo || "Observación", bold: true, size: 20 })], spacing: { before: 200 } }));
+                children.push(new Paragraph({ text: h.descripcion, alignment: AlignmentType.BOTH, spacing: { after: 200 } }));
+                for (const f of h.fotos) {
+                    const bytes = Uint8Array.from(atob(f.split(',')[1]), c => c.charCodeAt(0));
+                    children.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [new ImageRun({ data: bytes, transformation: { width: 450, height: 280 } })], spacing: { after: 200 } }));
+                }
+            }
+
+            children.push(new Paragraph({ children: [new TextRun({ text: "RECOMENDACIONES", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 400, after: 200 } }));
+            formData.recomendaciones.forEach(r => {
+                children.push(new Paragraph({ children: [new TextRun({ text: "• ", bold: true }), new TextRun(r.descripcion)], spacing: { after: 150 }, alignment: AlignmentType.BOTH }));
+                r.fotos.forEach(f => {
+                    const bytes = Uint8Array.from(atob(f.split(',')[1]), c => c.charCodeAt(0));
+                    children.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [new ImageRun({ data: bytes, transformation: { width: 400, height: 250 } })], spacing: { after: 200 } }));
+                });
+            });
+
+            children.push(new Paragraph({ children: [new TextRun({ text: "CONCLUSIÓN", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 400, after: 200 } }));
+            children.push(new Paragraph({ text: formData.conclusion.texto, alignment: AlignmentType.BOTH }));
+
+            const doc = new Document({ sections: [{ children }] });
+            const blob = await Packer.toBlob(doc);
+            saveAs(blob, `Minuta_Securitas_${formData.general.instalacion || 'Informe'}.docx`);
+
+        } catch (e) {
+            console.error(e);
+            alert("Error al generar el documento.");
+        } finally {
+            btn.innerHTML = originalText;
+        }
+    }
+  </script>
+</body>
+
+</html>
