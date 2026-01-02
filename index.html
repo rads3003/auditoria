@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Carga correcta de docx (versión moderna compatible con browser) -->
+    <!-- Carga correcta de docx -->
     <script type="module">
         import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, ImageRun, UnderlineType } from 'https://cdn.jsdelivr.net/npm/docx@9.5.1/+esm';
         window.docx = { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, ImageRun, UnderlineType };
@@ -44,10 +44,7 @@
             width: auto;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .btn-photo-upload:hover {
-            background-color: #dc2626;
-            transform: translateY(-1px);
-        }
+        .btn-photo-upload:hover { background-color: #dc2626; transform: translateY(-1px); }
         .btn-photo-upload:active { transform: scale(0.95); }
     </style>
 </head>
@@ -66,9 +63,7 @@
             </div>
         </div>
 
-        <nav id="sidebar-nav" class="flex-1 p-4 space-y-1">
-            <!-- Navegación JS -->
-        </nav>
+        <nav id="sidebar-nav" class="flex-1 p-4 space-y-1"></nav>
 
         <div class="p-4 border-t border-slate-200">
             <button onclick="generateDoc()" id="btn-download" class="w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-xl font-black text-sm flex items-center justify-center gap-3 transition-all active:scale-95 shadow-xl shadow-red-200">
@@ -90,9 +85,7 @@
             </div>
 
             <div class="bg-white rounded-[2rem] p-8 shadow-2xl border border-slate-200 min-h-[600px] flex flex-col">
-                <div id="form-container" class="flex-1">
-                    <!-- Formulario dinámico -->
-                </div>
+                <div id="form-container" class="flex-1"></div>
 
                 <div class="mt-8 flex justify-between pt-8 border-t border-slate-200">
                     <button id="btn-prev" onclick="changeTab(-1)" class="flex items-center gap-2 text-black font-black text-sm uppercase hover:translate-x-[-4px] transition-all">
@@ -134,6 +127,7 @@
         renderSidebar(); 
         renderForm(); 
         updateUI();
+        lucide.createIcons();
     };
 
     function renderSidebar() {
@@ -147,7 +141,12 @@
         lucide.createIcons();
     }
 
-    function setTab(id) { activeTabId = id; renderSidebar(); renderForm(); updateUI(); }
+    function setTab(id) { 
+        activeTabId = id; 
+        renderSidebar(); 
+        renderForm(); 
+        updateUI();
+    }
     
     function changeTab(dir) {
         const idx = SECTIONS.findIndex(s => s.id === activeTabId);
@@ -180,7 +179,9 @@
         renderForm();
     }
 
-    function updateItemField(type, index, field, value) { formData[type][index][field] = value; }
+    function updateItemField(type, index, field, value) { 
+        formData[type][index][field] = value; 
+    }
 
     function handlePhotoUpload(type, index, e) {
         const files = Array.from(e.target.files);
@@ -197,6 +198,77 @@
     function removePhoto(type, itemIdx, photoIdx) {
         formData[type][itemIdx].fotos.splice(photoIdx, 1);
         renderForm();
+    }
+
+    // FUNCIÓN PROFESIONAL DE MEJORA DE TEXTOS (como experto en seguridad privada)
+    function mejorarTextoSeguridad(textoOriginal, esTitulo = false, esRecomendacion = false) {
+        if (!textoOriginal || textoOriginal.trim() === '') return '';
+
+        let texto = textoOriginal.trim();
+        texto = texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
+
+        const terminosTecnicos = {
+            'puerta': 'puerta de acceso',
+            'ventana': 'ventana perimetral',
+            'reja': 'reja de protección',
+            'cerradura': 'sistema de cierre mecánico',
+            'candado': 'candado de seguridad',
+            'muro': 'cerramiento perimetral',
+            'cerca': 'cerramiento perimetral',
+            'portón': 'portón vehicular',
+            'cámara': 'cámara de videovigilancia CCTV',
+            'dvr': 'grabador digital DVR/NVR',
+            'alarma': 'sistema de alarma contra intrusión',
+            'sensor': 'sensor perimetral/volumétrico',
+            'rota': 'presenta daños estructurales',
+            'roto': 'presenta daños estructurales',
+            'dañada': 'en estado de deterioro',
+            'dañado': 'en estado de deterioro',
+            'abierto': 'sin cierre efectivo',
+            'sin llave': 'sin control de acceso adecuado',
+            'sin mantenimiento': 'sin evidencia de mantenimiento preventivo',
+            'falta': 'ausencia de',
+            'no tiene': 'no cuenta con',
+            'no hay': 'ausencia de',
+            'oscuro': 'insuficiente iluminación de seguridad',
+            'expuesto': 'expuesto a riesgo de intrusión',
+            'se ve': 'se identifica',
+            'se observa': 'se detecta',
+            'esta mal': 'presenta deficiencia',
+            'hay que': 'es necesario',
+            'recomiendo': 'se recomienda',
+            'arreglar': 'reparar y poner en funcionamiento',
+            'cambiar': 'reemplazar por elemento de mayor resistencia',
+            'poner': 'instalar'
+        };
+
+        for (const [informal, tecnico] of Object.entries(terminosTecnicos)) {
+            const regex = new RegExp('\\b' + informal + '\\b', 'gi');
+            texto = texto.replace(regex, tecnico);
+        }
+
+        if (esTitulo) {
+            texto = texto.toUpperCase();
+            if (!texto.endsWith('IDENTIFICADA')) texto = texto.replace(/\.$/, '') + ' - VULNERABILIDAD IDENTIFICADA';
+        }
+
+        if (!esRecomendacion && !esTitulo) {
+            if (!texto.toLowerCase().includes('constituye una vulnerabilidad')) {
+                texto += ' Lo anterior constituye una vulnerabilidad crítica de seguridad física que facilita potenciales accesos no autorizados y expone activos protegidos.';
+            }
+        }
+
+        if (esRecomendacion) {
+            if (!texto.toLowerCase().startsWith('se recomienda')) {
+                texto = 'Se recomienda implementar de forma inmediata: ' + texto.toLowerCase();
+            }
+            if (!texto.includes('prioridad alta')) {
+                texto += ', con prioridad alta, conforme a estándares de seguridad física y normativa vigente.';
+            }
+        }
+
+        if (!texto.endsWith('.')) texto += '.';
+        return texto;
     }
 
     function renderForm() {
@@ -283,7 +355,7 @@
         const originalContent = btn.innerHTML;
 
         if (!window.docx) {
-            alert("La librería docx aún se está cargando. Por favor, espera unos segundos e inténtalo de nuevo.");
+            alert("La librería docx aún se está cargando. Espera unos segundos y vuelve a intentarlo.");
             return;
         }
 
@@ -295,14 +367,12 @@
         try {
             const children = [];
 
-            // Encabezado
             children.push(new Paragraph({
                 children: [new TextRun({ text: "MINUTA INFORME DE ESTADO SERVICIO", bold: true, size: 28, color: "FF0000" })],
                 alignment: AlignmentType.LEFT,
                 spacing: { after: 400 }
             }));
 
-            // Tabla datos generales
             children.push(new Table({
                 width: { size: 100, type: WidthType.PERCENTAGE },
                 rows: [
@@ -322,7 +392,6 @@
 
             children.push(new Paragraph({ text: "______________________________________________________________________", spacing: { before: 200, after: 400 } }));
 
-            // Objetivos
             children.push(new Paragraph({ children: [new TextRun({ text: "OBJETIVO DEL INFORME", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { after: 150 } }));
             children.push(new Paragraph({ text: formData.objetivos.principal, alignment: AlignmentType.BOTH, spacing: { after: 300 } }));
 
@@ -335,7 +404,6 @@
                 }));
             });
 
-            // Análisis de riesgos con criticidad calculada
             children.push(new Paragraph({ children: [new TextRun({ text: "ANÁLISIS DE RIESGOS", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 400, after: 200 } }));
 
             function getCriticidad(impacto, probabilidad) {
@@ -375,12 +443,16 @@
                 ]
             }));
 
-            // Hallazgos
+            // HALLAZGOS con mejora profesional
             children.push(new Paragraph({ children: [new TextRun({ text: "HALLAZGOS TÉCNICOS Y EVIDENCIAS", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 500, after: 200 } }));
             formData.hallazgos.forEach(h => {
                 if (h.titulo || h.descripcion || h.fotos.length > 0) {
-                    if (h.titulo) children.push(new Paragraph({ children: [new TextRun({ text: h.titulo, bold: true, size: 20 })], spacing: { before: 200 } }));
-                    if (h.descripcion) children.push(new Paragraph({ text: h.descripcion, alignment: AlignmentType.BOTH, spacing: { after: 200 } }));
+                    const tituloMejorado = mejorarTextoSeguridad(h.titulo, true, false);
+                    const descripcionMejorada = mejorarTextoSeguridad(h.descripcion, false, false);
+
+                    if (tituloMejorado) children.push(new Paragraph({ children: [new TextRun({ text: tituloMejorado, bold: true, size: 20 })], spacing: { before: 300 } }));
+                    if (descripcionMejorada) children.push(new Paragraph({ text: descripcionMejorada, alignment: AlignmentType.BOTH, spacing: { after: 200 } }));
+
                     h.fotos.forEach(f => {
                         try {
                             const base64 = f.split(',')[1];
@@ -395,11 +467,19 @@
                 }
             });
 
-            // Recomendaciones
+            // RECOMENDACIONES con mejora profesional
             children.push(new Paragraph({ children: [new TextRun({ text: "RECOMENDACIONES", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 400, after: 200 } }));
             formData.recomendaciones.forEach(r => {
                 if (r.descripcion || r.fotos.length > 0) {
-                    if (r.descripcion) children.push(new Paragraph({ children: [new TextRun({ text: "• ", bold: true }), new TextRun(r.descripcion)], alignment: AlignmentType.BOTH, spacing: { after: 150 } }));
+                    const descripcionMejorada = mejorarTextoSeguridad(r.descripcion, false, true);
+                    if (descripcionMejorada) {
+                        children.push(new Paragraph({ 
+                            children: [new TextRun({ text: "• ", bold: true }), new TextRun(descripcionMejorada)], 
+                            alignment: AlignmentType.BOTH, 
+                            spacing: { after: 150 } 
+                        }));
+                    }
+
                     r.fotos.forEach(f => {
                         try {
                             const base64 = f.split(',')[1];
@@ -414,7 +494,6 @@
                 }
             });
 
-            // Conclusión
             children.push(new Paragraph({ children: [new TextRun({ text: "CONCLUSIÓN", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 400, after: 200 } }));
             children.push(new Paragraph({ text: formData.conclusion.texto, alignment: AlignmentType.BOTH }));
 
@@ -425,7 +504,7 @@
 
         } catch (err) {
             console.error("ERROR GENERACIÓN:", err);
-            alert("Error al generar el documento. Revisa la consola para más detalles.");
+            alert("Error al generar el documento. Revisa la consola (F12) para más detalles.");
         } finally {
             btn.innerHTML = originalContent;
             btn.disabled = false;
