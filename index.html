@@ -1,168 +1,107 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Securitas Audit Tool - Edición Profesional</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://unpkg.com/docx@8.2.2/build/index.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-
-    .active-tab {
-      background-color: #000000;
-      color: white;
-      border-radius: 0.75rem;
-    }
-
-    .input-field {
-      background-color: #ffffff;
-      border: 2px solid #000000;
-      border-radius: 0.75rem;
-      padding: 0.75rem 1rem;
-      width: 100%;
-      font-weight: 600;
-      color: #000000;
-      transition: all 0.2s;
-    }
-
-    .input-field:focus {
-      outline: none;
-      border-color: #ef4444;
-      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
-    }
-
-    .nav-item {
-      transition: all 0.2s;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1rem;
-      font-size: 0.875rem;
-      font-weight: 700;
-      color: #000000;
-    }
-
-    .nav-item:hover {
-      background-color: #f1f5f9;
-      border-radius: 0.75rem;
-    }
-
-    label {
-      color: #000000 !important;
-      font-weight: 800 !important;
-    }
-
-    .card-dynamic {
-      border-left: 8px solid #ef4444;
-      background: #ffffff;
-      padding: 1.5rem;
-      border-radius: 1rem;
-      margin-bottom: 1.5rem;
-      border: 2px solid #000000;
-      border-left-width: 8px;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Botón de fotos optimizado con tamaño reducido */
-    .btn-photo-upload {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      background-color: #ef4444;
-      color: #ffffff;
-      padding: 0.6rem 1.25rem;
-      /* Relleno reducido */
-      border-radius: 0.5rem;
-      font-weight: 800;
-      font-size: 0.75rem;
-      /* Fuente más pequeña */
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: 2px solid #b91c1c;
-      width: auto;
-      /* Ya no es de ancho completo por defecto */
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-photo-upload:hover {
-      background-color: #dc2626;
-      transform: translateY(-1px);
-    }
-
-    .btn-photo-upload:active {
-      transform: scale(0.95);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Securitas Audit Tool - Edición Profesional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Librerías corregidas para evitar errores de sintaxis 'export' -->
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .active-tab { background-color: #000000; color: white; border-radius: 0.75rem; }
+        .input-field { background-color: #ffffff; border: 2px solid #000000; border-radius: 0.75rem; padding: 0.75rem 1rem; width: 100%; font-weight: 600; color: #000000; transition: all 0.2s; }
+        .input-field:focus { outline: none; border-color: #ef4444; box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1); }
+        .nav-item { transition: all 0.2s; cursor: pointer; display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; font-size: 0.875rem; font-weight: 700; color: #000000; }
+        .nav-item:hover { background-color: #f1f5f9; border-radius: 0.75rem; }
+        label { color: #000000 !important; font-weight: 800 !important; }
+        .card-dynamic { border-left: 8px solid #ef4444; background: #ffffff; padding: 1.5rem; border-radius: 1rem; margin-bottom: 1.5rem; border: 2px solid #000000; border-left-width: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        
+        .btn-photo-upload {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: #ef4444;
+            color: #ffffff;
+            padding: 0.6rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 800;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid #b91c1c;
+            width: auto;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .btn-photo-upload:hover {
+            background-color: #dc2626;
+            transform: translateY(-1px);
+        }
+        .btn-photo-upload:active { transform: scale(0.95); }
+    </style>
 </head>
-
 <body class="bg-slate-100 text-slate-900">
 
-  <div id="app" class="min-h-screen flex flex-col md:flex-row">
+<div id="app" class="min-h-screen flex flex-col md:flex-row">
     <!-- Sidebar -->
     <aside class="w-full md:w-80 bg-white border-r border-slate-300 flex flex-col shrink-0">
-      <div class="p-6 border-b border-slate-200 flex items-center gap-3">
-        <div class="bg-red-600 p-2 rounded-lg text-white">
-          <i data-lucide="shield" class="w-6 h-6"></i>
+        <div class="p-6 border-b border-slate-200 flex items-center gap-3">
+            <div class="bg-red-600 p-2 rounded-lg text-white">
+                <i data-lucide="shield" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h1 class="font-extrabold text-black text-lg leading-none uppercase tracking-tight">Securitas</h1>
+                <p class="text-[10px] text-red-600 font-black tracking-widest uppercase mt-1">Minuta de Auditoría</p>
+            </div>
         </div>
-        <div>
-          <h1 class="font-extrabold text-black text-lg leading-none uppercase tracking-tight">Securitas</h1>
-          <p class="text-[10px] text-red-600 font-black tracking-widest uppercase mt-1">Minuta de Auditoría ETAC</p>
-        </div>
-      </div>
 
-      <nav id="sidebar-nav" class="flex-1 p-4 space-y-1">
-        <!-- Navegación JS -->
-      </nav>
+        <nav id="sidebar-nav" class="flex-1 p-4 space-y-1">
+            <!-- Navegación JS -->
+        </nav>
 
-      <div class="p-4 border-t border-slate-200">
-        <button onclick="generateDoc()" id="btn-download" class="w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-xl font-black text-sm flex items-center justify-center gap-3 transition-all active:scale-95 shadow-xl shadow-red-200">
+        <div class="p-4 border-t border-slate-200">
+            <button onclick="generateDoc()" id="btn-download" class="w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-xl font-black text-sm flex items-center justify-center gap-3 transition-all active:scale-95 shadow-xl shadow-red-200">
                 <i data-lucide="file-check" class="w-5 h-5"></i>
                 <span>DESCARGAR INFORME DOCX</span>
             </button>
-      </div>
+        </div>
     </aside>
 
     <!-- Main Content -->
     <main class="flex-1 p-6 md:p-10 overflow-y-auto">
-      <div class="max-w-4xl mx-auto">
-        <div class="mb-8 flex justify-between items-end">
-          <div>
-            <span id="tab-category" class="text-red-600 font-black text-xs tracking-widest uppercase bg-red-100 px-3 py-1 rounded-full border border-red-200">MODO EDICIÓN PROFESIONAL</span>
-            <h2 id="current-tab-title" class="text-4xl font-black text-black mt-2">Datos de Instalación</h2>
-          </div>
-          <div id="tab-counter" class="text-6xl font-black text-slate-300 tabular-nums">01</div>
-        </div>
+        <div class="max-w-4xl mx-auto">
+            <div class="mb-8 flex justify-between items-end">
+                <div>
+                    <span id="tab-category" class="text-red-600 font-black text-xs tracking-widest uppercase bg-red-100 px-3 py-1 rounded-full border border-red-200">MODO EDICIÓN PROFESIONAL</span>
+                    <h2 id="current-tab-title" class="text-4xl font-black text-black mt-2">Datos de Instalación</h2>
+                </div>
+                <div id="tab-counter" class="text-6xl font-black text-slate-300 tabular-nums">01</div>
+            </div>
 
-        <div class="bg-white rounded-[2rem] p-8 shadow-2xl border border-slate-200 min-h-[600px] flex flex-col">
-          <div id="form-container" class="flex-1">
-            <!-- Formulario dinámico -->
-          </div>
+            <div class="bg-white rounded-[2rem] p-8 shadow-2xl border border-slate-200 min-h-[600px] flex flex-col">
+                <div id="form-container" class="flex-1">
+                    <!-- Formulario dinámico -->
+                </div>
 
-          <div class="mt-8 flex justify-between pt-8 border-t border-slate-200">
-            <button id="btn-prev" onclick="changeTab(-1)" class="flex items-center gap-2 text-black font-black text-sm uppercase hover:translate-x-[-4px] transition-all">
+                <div class="mt-8 flex justify-between pt-8 border-t border-slate-200">
+                    <button id="btn-prev" onclick="changeTab(-1)" class="flex items-center gap-2 text-black font-black text-sm uppercase hover:translate-x-[-4px] transition-all">
                         <i data-lucide="arrow-left" class="w-5 h-5"></i> Anterior
                     </button>
-            <button id="btn-next" onclick="changeTab(1)" class="bg-black hover:bg-slate-800 text-white px-10 py-4 rounded-2xl font-black text-sm uppercase flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-slate-300">
+                    <button id="btn-next" onclick="changeTab(1)" class="bg-black hover:bg-slate-800 text-white px-10 py-4 rounded-2xl font-black text-sm uppercase flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-slate-300">
                         Siguiente <i data-lucide="arrow-right" class="w-5 h-5"></i>
                     </button>
-          </div>
+                </div>
+            </div>
         </div>
-      </div>
     </main>
-  </div>
+</div>
 
-  <script>
+<script>
     let activeTabId = 'general';
     let formData = {
         general: { empresa: 'Securitas S.A.', instalacion: '', ciudad: '', fecha: new Date().toLocaleDateString('es-ES'), tecnico: '', elaborador: '' },
@@ -185,7 +124,11 @@
         { id: 'conclusion', title: 'Conclusión', icon: 'check-circle' }
     ];
 
-    window.onload = () => { renderSidebar(); renderForm(); };
+    window.onload = () => { 
+        renderSidebar(); 
+        renderForm(); 
+        updateUI();
+    };
 
     function renderSidebar() {
         const nav = document.getElementById('sidebar-nav');
@@ -199,17 +142,22 @@
     }
 
     function setTab(id) { activeTabId = id; renderSidebar(); renderForm(); updateUI(); }
+    
     function changeTab(dir) {
         const idx = SECTIONS.findIndex(s => s.id === activeTabId);
         const next = idx + dir;
-        if (next >= 0 && next < SECTIONS.length) setTab(SECTIONS[next].id);
+        if (next >= 0 && next < SECTIONS.length) {
+            setTab(SECTIONS[next].id);
+        } else if (next === SECTIONS.length) {
+            generateDoc();
+        }
     }
 
     function updateUI() {
         const idx = SECTIONS.findIndex(s => s.id === activeTabId);
         document.getElementById('current-tab-title').innerText = SECTIONS[idx].title;
         document.getElementById('tab-counter').innerText = (idx + 1).toString().padStart(2, '0');
-        document.getElementById('btn-prev').classList.toggle('invisible', idx === 0);
+        document.getElementById('btn-prev').style.visibility = idx === 0 ? 'hidden' : 'visible';
         document.getElementById('btn-next').innerText = idx === SECTIONS.length - 1 ? 'GENERAR INFORME' : 'CONTINUAR';
     }
 
@@ -252,7 +200,7 @@
         if (activeTabId === 'general') {
             html = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="space-y-3"><label class="text-xs uppercase">INSTALACIÓN</label><input type="text" value="${formData.general.instalacion}" oninput="formData.general.instalacion = this.value" class="input-field"></div>
+                    <div class="space-y-3"><label class="text-xs uppercase">INSTALACIÓN</label><input type="text" value="${formData.general.instalacion}" oninput="formData.general.instalacion = this.value" class="input-field" placeholder="Nombre de la planta/sitio"></div>
                     <div class="space-y-3"><label class="text-xs uppercase">CIUDAD / COMUNA</label><input type="text" value="${formData.general.ciudad}" oninput="formData.general.ciudad = this.value" class="input-field"></div>
                     <div class="space-y-3"><label class="text-xs uppercase">TRABAJO DE CAMPO</label><input type="text" value="${formData.general.tecnico}" oninput="formData.general.tecnico = this.value" class="input-field"></div>
                     <div class="space-y-3"><label class="text-xs uppercase">ANÁLISIS Y ELABORACIÓN</label><input type="text" value="${formData.general.elaborador}" oninput="formData.general.elaborador = this.value" class="input-field"></div>
@@ -269,32 +217,39 @@
         } else if (activeTabId === 'analisis') {
             html = formData.analisis.map((item, i) => `
                 <div class="card-dynamic">
-                    <div class="flex justify-between mb-4"><span class="font-black text-black uppercase">AMENAZA / RIESGO #${i+1}</span>${i > 0 ? `<button onclick="removeItem('analisis', ${i})" class="text-red-600 font-bold">X</button>` : ''}</div>
+                    <div class="flex justify-between mb-4"><span class="font-black text-black uppercase">AMENAZA / RIESGO #${i+1}</span>${i > 0 ? `<button onclick="removeItem('analisis', ${i})" class="text-red-600 font-bold">ELIMINAR</button>` : ''}</div>
                     <div class="space-y-4">
-                        <input type="text" value="${item.amenazas}" oninput="updateItemField('analisis', ${i}, 'amenazas', this.value)" class="input-field" placeholder="Describa la amenaza">
+                        <input type="text" value="${item.amenazas}" oninput="updateItemField('analisis', ${i}, 'amenazas', this.value)" class="input-field" placeholder="Ej: Intrusión por cierre perimetral dañado">
                         <div class="grid grid-cols-2 gap-4">
-                            <select onchange="updateItemField('analisis', ${i}, 'impacto', this.value)" class="input-field"><option ${item.impacto === 'Bajo' ? 'selected' : ''}>Bajo</option><option ${item.impacto === 'Medio' ? 'selected' : ''}>Medio</option><option ${item.impacto === 'Alto' ? 'selected' : ''}>Alto</option></select>
-                            <select onchange="updateItemField('analisis', ${i}, 'probabilidad', this.value)" class="input-field"><option ${item.probabilidad === 'Baja' ? 'selected' : ''}>Baja</option><option ${item.probabilidad === 'Media' ? 'selected' : ''}>Media</option><option ${item.probabilidad === 'Alta' ? 'selected' : ''}>Alta</option></select>
+                            <select onchange="updateItemField('analisis', ${i}, 'impacto', this.value)" class="input-field">
+                                <option value="Bajo" ${item.impacto === 'Bajo' ? 'selected' : ''}>Impacto Bajo</option>
+                                <option value="Medio" ${item.impacto === 'Medio' ? 'selected' : ''}>Impacto Medio</option>
+                                <option value="Alto" ${item.impacto === 'Alto' ? 'selected' : ''}>Impacto Alto</option>
+                            </select>
+                            <select onchange="updateItemField('analisis', ${i}, 'probabilidad', this.value)" class="input-field">
+                                <option value="Baja" ${item.probabilidad === 'Baja' ? 'selected' : ''}>Probabilidad Baja</option>
+                                <option value="Media" ${item.probabilidad === 'Media' ? 'selected' : ''}>Probabilidad Media</option>
+                                <option value="Alta" ${item.probabilidad === 'Alta' ? 'selected' : ''}>Probabilidad Alta</option>
+                            </select>
                         </div>
                     </div>
                 </div>
-            `).join('') + `<button onclick="addItem('analisis')" class="w-full border-2 border-black py-4 rounded-xl font-black">+ AGREGAR RIESGO</button>`;
+            `).join('') + `<button onclick="addItem('analisis')" class="w-full border-2 border-black py-4 rounded-xl font-black uppercase hover:bg-slate-50">+ AGREGAR RIESGO</button>`;
         } else if (activeTabId === 'hallazgos' || activeTabId === 'recomendaciones') {
             const type = activeTabId;
             html = formData[type].map((item, i) => `
                 <div class="card-dynamic">
                     <div class="flex justify-between mb-4"><span class="font-black text-black uppercase">${type.slice(0,-1)} #${i+1}</span>${i > 0 ? `<button onclick="removeItem('${type}', ${i})" class="text-red-600 font-bold">X</button>` : ''}</div>
                     <div class="space-y-4">
-                        ${type === 'hallazgos' ? `<input type="text" placeholder="Título" value="${item.titulo}" oninput="updateItemField('${type}', ${i}, 'titulo', this.value)" class="input-field">` : ''}
-                        <textarea placeholder="Descripción..." oninput="updateItemField('${type}', ${i}, 'descripcion', this.value)" class="input-field h-24 resize-none">${item.descripcion}</textarea>
+                        ${type === 'hallazgos' ? `<input type="text" placeholder="Título del hallazgo" value="${item.titulo}" oninput="updateItemField('${type}', ${i}, 'titulo', this.value)" class="input-field">` : ''}
+                        <textarea placeholder="Detalle técnico..." oninput="updateItemField('${type}', ${i}, 'descripcion', this.value)" class="input-field h-24 resize-none">${item.descripcion}</textarea>
                         
                         <div class="space-y-2 mt-4">
-                            <label class="text-[10px] uppercase font-black tracking-widest block text-red-600">Adjuntar Evidencia</label>
-                            
+                            <label class="text-[10px] uppercase font-black tracking-widest block text-red-600">Evidencia Fotográfica</label>
                             <label class="btn-photo-upload">
                                 <i data-lucide="camera" class="w-4 h-4"></i>
                                 <span>Subir fotos</span>
-                                <input type="file" multiple class="hidden" onchange="handlePhotoUpload('${type}', ${i}, event)">
+                                <input type="file" multiple accept="image/*" class="hidden" onchange="handlePhotoUpload('${type}', ${i}, event)">
                             </label>
                             
                             <div class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 mt-2">
@@ -308,7 +263,7 @@
                         </div>
                     </div>
                 </div>
-            `).join('') + `<button onclick="addItem('${type}')" class="w-full border-2 border-black py-4 rounded-xl font-black shadow-md hover:bg-slate-50 transition-all uppercase">+ AGREGAR NUEVO ${activeTabId.slice(0,-1)}</button>`;
+            `).join('') + `<button onclick="addItem('${type}')" class="w-full border-2 border-black py-4 rounded-xl font-black shadow-md hover:bg-slate-50 transition-all uppercase">+ AGREGAR ${activeTabId.slice(0,-1)}</button>`;
         } else {
             html = `<textarea oninput="formData.conclusion.texto = this.value" class="input-field h-[400px] resize-none text-lg">${formData.conclusion.texto}</textarea>`;
         }
@@ -316,106 +271,176 @@
         lucide.createIcons();
     }
 
+    // FUNCIÓN DE DESCARGA CORREGIDA PARA CDN JAVASCRIPT GLOBAL
     async function generateDoc() {
-        const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, ImageRun, ShadingType, BorderStyle, UnderlineType } = window.docx;
         const btn = document.getElementById('btn-download');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = 'GENERANDO...';
+        const originalContent = btn.innerHTML;
+        
+        // La librería cargada vía JSDelivr expone el objeto global 'docx'
+        const docxLib = window.docx;
+        if (!docxLib) {
+            alert("Error: La librería de documentos no está lista. Por favor, espere unos segundos o verifique su conexión a internet.");
+            return;
+        }
+
+        const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, ImageRun, BorderStyle, UnderlineType } = docxLib;
+
+        btn.innerHTML = '<span class="animate-pulse">PROCESANDO...</span>';
+        btn.disabled = true;
 
         try {
-            const children = [
-                new Paragraph({
-                    children: [new TextRun({ text: "MINUTA INFORME DE ESTADO SERVICIO", bold: true, size: 28, color: "FF0000" })],
-                    alignment: AlignmentType.LEFT,
-                    spacing: { after: 400 }
-                }),
-                
-                new Table({
-                    width: { size: 100, type: WidthType.PERCENTAGE },
-                    rows: [
-                        ["Nombre de la Empresa de Seguridad:", formData.general.empresa],
-                        ["Nombre de la Instalación:", formData.general.instalacion],
-                        ["Ciudad / Comuna:", formData.general.ciudad],
-                        ["Fecha de Emisión:", formData.general.fecha],
-                        ["Trabajo de Campo:", formData.general.tecnico],
-                        ["Análisis y Elaboración de Informe:", formData.general.elaborador]
-                    ].map(pair => new TableRow({
-                        children: [
-                            new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: pair[0], bold: true, size: 20 })] })], width: { size: 40, type: WidthType.PERCENTAGE }, borders: { top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE }, left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE } } }),
-                            new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: pair[1] || "", size: 20 })] })], width: { size: 60, type: WidthType.PERCENTAGE }, borders: { top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE }, left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE } } })
-                        ]
-                    }))
-                }),
+            const children = [];
 
-                new Paragraph({ text: "______________________________________________________________________", spacing: { before: 200, after: 400 } }),
+            // Encabezado
+            children.push(new Paragraph({
+                children: [new TextRun({ text: "MINUTA INFORME DE ESTADO SERVICIO", bold: true, size: 28, color: "FF0000" })],
+                alignment: AlignmentType.LEFT,
+                spacing: { after: 400 }
+            }));
 
-                new Paragraph({ children: [new TextRun({ text: "OBJETIVO DEL INFORME", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { after: 150 } }),
-                new Paragraph({ text: formData.objetivos.principal, alignment: AlignmentType.BOTH, spacing: { after: 300 } }),
-                
-                new Paragraph({ children: [new TextRun({ text: "OBJETIVOS ESPECÍFICOS", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { after: 150 } }),
-                ...formData.objetivos.especificos.split('\n').filter(l => l.trim()).map(line => new Paragraph({ 
+            // Tabla de datos generales
+            children.push(new Table({
+                width: { size: 100, type: WidthType.PERCENTAGE },
+                rows: [
+                    ["Nombre de la Empresa de Seguridad:", formData.general.empresa],
+                    ["Nombre de la Instalación:", formData.general.instalacion],
+                    ["Ciudad / Comuna:", formData.general.ciudad],
+                    ["Fecha de Emisión:", formData.general.fecha],
+                    ["Trabajo de Campo:", formData.general.tecnico],
+                    ["Análisis y Elaboración de Informe:", formData.general.elaborador]
+                ].map(pair => new TableRow({
+                    children: [
+                        new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: pair[0], bold: true, size: 20 })] })], width: { size: 40, type: WidthType.PERCENTAGE }, borders: { top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE }, left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE } } }),
+                        new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: pair[1] || "", size: 20 })] })], width: { size: 60, type: WidthType.PERCENTAGE }, borders: { top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE }, left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE } } })
+                    ]
+                }))
+            }));
+
+            children.push(new Paragraph({ text: "______________________________________________________________________", spacing: { before: 200, after: 400 } }));
+
+            // Objetivos
+            children.push(new Paragraph({ children: [new TextRun({ text: "OBJETIVO DEL INFORME", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { after: 150 } }));
+            children.push(new Paragraph({ text: formData.objetivos.principal, alignment: AlignmentType.BOTH, spacing: { after: 300 } }));
+            
+            children.push(new Paragraph({ children: [new TextRun({ text: "OBJETIVOS ESPECÍFICOS", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { after: 150 } }));
+            formData.objetivos.especificos.split('\n').filter(l => l.trim()).forEach(line => {
+                children.push(new Paragraph({ 
                     children: [new TextRun({ text: "• ", bold: true }), new TextRun(line.trim())],
                     spacing: { after: 100 },
                     alignment: AlignmentType.BOTH
-                })),
+                }));
+            });
 
-                new Paragraph({ children: [new TextRun({ text: "ANÁLISIS DE RIESGOS", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 400, after: 200 } }),
-                new Table({
-                    width: { size: 100, type: WidthType.PERCENTAGE },
-                    rows: [
-                        new TableRow({
-                            children: ["Amenazas / Riesgos detectados", "Impacto potencial", "Probabilidad", "Criticidad"].map(h => new TableCell({
-                                children: [new Paragraph({ children: [new TextRun({ text: h, bold: true, size: 18 })], alignment: AlignmentType.CENTER })],
-                                shading: { fill: "D9D9D9" }
-                            }))
-                        }),
-                        ...formData.analisis.map(a => new TableRow({
-                            children: [
-                                new TableCell({ children: [new Paragraph({ text: a.amenazas, size: 18 })] }),
-                                new TableCell({ children: [new Paragraph({ text: "Daños operativos", size: 18 })] }),
-                                new TableCell({ children: [new Paragraph({ text: a.probabilidad, size: 18, alignment: AlignmentType.CENTER })] }),
-                                new TableCell({ children: [new Paragraph({ text: a.impacto, size: 18, bold: true, alignment: AlignmentType.CENTER })], shading: { fill: a.impacto === 'Alto' ? 'FFCCCC' : 'FFFFCC' } })
-                            ]
+            // Análisis de Riesgo
+            children.push(new Paragraph({ children: [new TextRun({ text: "ANÁLISIS DE RIESGOS", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 400, after: 200 } }));
+
+            function getCriticidad(impacto, probabilidad) {
+                const impactMap = { 'Bajo': 1, 'Medio': 2, 'Alto': 3 };
+                const probMap = { 'Baja': 1, 'Media': 2, 'Alta': 3 };
+                const impactNum = impactMap[impacto] || 1;
+                const probNum = probMap[probabilidad] || 1;
+                const risk = impactNum * probNum;
+                if (risk >= 6) return 'Alta';
+                if (risk >= 4) return 'Media';
+                return 'Baja';
+            }
+
+            function getShading(criticidad) {
+                if (criticidad === 'Alta') return 'FFCCCC';
+                if (criticidad === 'Media') return 'FFFFCC';
+                return 'CCFFCC';
+            }
+
+            children.push(new Table({
+                width: { size: 100, type: WidthType.PERCENTAGE },
+                rows: [
+                    new TableRow({
+                        children: ["Amenazas / Riesgos detectados", "Impacto", "Probabilidad", "Criticidad"].map(h => new TableCell({
+                            children: [new Paragraph({ children: [new TextRun({ text: h, bold: true, size: 18 })], alignment: AlignmentType.CENTER })],
+                            shading: { fill: "D9D9D9" }
                         }))
-                    ]
-                }),
+                    }),
+                    ...formData.analisis.map(a => new TableRow({
+                        children: [
+                            new TableCell({ children: [new Paragraph({ text: a.amenazas || "Sin definir", size: 18 })] }),
+                            new TableCell({ children: [new Paragraph({ text: a.impacto, size: 18, alignment: AlignmentType.CENTER })] }),
+                            new TableCell({ children: [new Paragraph({ text: a.probabilidad, size: 18, alignment: AlignmentType.CENTER })] }),
+                            new TableCell({ children: [new Paragraph({ text: getCriticidad(a.impacto, a.probabilidad), size: 18, bold: true, alignment: AlignmentType.CENTER })], shading: { fill: getShading(getCriticidad(a.impacto, a.probabilidad)) } })
+                        ]
+                    }))
+                ]
+            }));
 
-                new Paragraph({ children: [new TextRun({ text: "HALLAZGOS TÉCNICOS Y EVIDENCIAS", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 500, after: 200 } }),
-            ];
-
+            // Hallazgos
+            children.push(new Paragraph({ children: [new TextRun({ text: "HALLAZGOS TÉCNICOS Y EVIDENCIAS", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 500, after: 200 } }));
             for (const h of formData.hallazgos) {
-                children.push(new Paragraph({ children: [new TextRun({ text: h.titulo || "Observación", bold: true, size: 20 })], spacing: { before: 200 } }));
-                children.push(new Paragraph({ text: h.descripcion, alignment: AlignmentType.BOTH, spacing: { after: 200 } }));
-                for (const f of h.fotos) {
-                    const bytes = Uint8Array.from(atob(f.split(',')[1]), c => c.charCodeAt(0));
-                    children.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [new ImageRun({ data: bytes, transformation: { width: 450, height: 280 } })], spacing: { after: 200 } }));
+                if (h.titulo || h.descripcion || h.fotos.length > 0) {
+                    children.push(new Paragraph({ children: [new TextRun({ text: h.titulo || "Observación", bold: true, size: 20 })], spacing: { before: 200 } }));
+                    children.push(new Paragraph({ text: h.descripcion || "", alignment: AlignmentType.BOTH, spacing: { after: 200 } }));
+                    
+                    for (const f of h.fotos) {
+                        try {
+                            const base64Data = f.split(',')[1];
+                            const binaryData = atob(base64Data);
+                            const bytes = new Uint8Array(binaryData.length);
+                            for (let i = 0; i < binaryData.length; i++) bytes[i] = binaryData.charCodeAt(i);
+                            
+                            children.push(new Paragraph({ 
+                                alignment: AlignmentType.CENTER, 
+                                children: [new ImageRun({ data: bytes, transformation: { width: 450, height: 280 } })], 
+                                spacing: { after: 200 } 
+                            }));
+                        } catch (e) { console.error("Fallo imagen hallazgo", e); }
+                    }
                 }
             }
 
+            // Recomendaciones
             children.push(new Paragraph({ children: [new TextRun({ text: "RECOMENDACIONES", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 400, after: 200 } }));
-            formData.recomendaciones.forEach(r => {
-                children.push(new Paragraph({ children: [new TextRun({ text: "• ", bold: true }), new TextRun(r.descripcion)], spacing: { after: 150 }, alignment: AlignmentType.BOTH }));
-                r.fotos.forEach(f => {
-                    const bytes = Uint8Array.from(atob(f.split(',')[1]), c => c.charCodeAt(0));
-                    children.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [new ImageRun({ data: bytes, transformation: { width: 400, height: 250 } })], spacing: { after: 200 } }));
-                });
-            });
+            for (const r of formData.recomendaciones) {
+                if (r.descripcion || r.fotos.length > 0) {
+                    children.push(new Paragraph({ children: [new TextRun({ text: "• ", bold: true }), new TextRun(r.descripcion || "")], spacing: { after: 150 }, alignment: AlignmentType.BOTH }));
+                    for (const f of r.fotos) {
+                        try {
+                            const base64Data = f.split(',')[1];
+                            const binaryData = atob(base64Data);
+                            const bytes = new Uint8Array(binaryData.length);
+                            for (let i = 0; i < binaryData.length; i++) bytes[i] = binaryData.charCodeAt(i);
+                            
+                            children.push(new Paragraph({ 
+                                alignment: AlignmentType.CENTER, 
+                                children: [new ImageRun({ data: bytes, transformation: { width: 400, height: 250 } })], 
+                                spacing: { after: 200 } 
+                            }));
+                        } catch (e) { console.error("Fallo imagen rec", e); }
+                    }
+                }
+            }
 
+            // Conclusión
             children.push(new Paragraph({ children: [new TextRun({ text: "CONCLUSIÓN", bold: true, size: 24, underline: { type: UnderlineType.SINGLE } })], spacing: { before: 400, after: 200 } }));
             children.push(new Paragraph({ text: formData.conclusion.texto, alignment: AlignmentType.BOTH }));
 
-            const doc = new Document({ sections: [{ children }] });
-            const blob = await Packer.toBlob(doc);
-            saveAs(blob, `Minuta_Securitas_${formData.general.instalacion || 'Informe'}.docx`);
+            // Crear documento final
+            const doc = new Document({ 
+                sections: [{ properties: {}, children: children }] 
+            });
 
-        } catch (e) {
-            console.error(e);
-            alert("Error al generar el documento.");
+            // Generar Blob usando Packer
+            const blob = await Packer.toBlob(doc);
+            
+            // Descargar usando FileSaver
+            const filename = `Informe_Auditoria_${(formData.general.instalacion || 'Securitas').replace(/\s+/g, '_')}.docx`;
+            window.saveAs(blob, filename);
+
+        } catch (err) {
+            console.error("ERROR GENERACIÓN:", err);
+            alert("No se pudo generar el documento. Revise la consola para más detalles.");
         } finally {
-            btn.innerHTML = originalText;
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
         }
     }
-  </script>
+</script>
 </body>
-
 </html>
