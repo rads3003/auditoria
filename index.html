@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Securitas Audit Tool - Edición Profesional</title>
+    <title>Infonex Audit Tool - Edición Profesional</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -46,19 +46,35 @@
         }
         .btn-photo-upload:hover { background-color: #dc2626; transform: translateY(-1px); }
         .btn-photo-upload:active { transform: scale(0.95); }
+
+        /* Pie de página fijo */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            border-top: 2px solid #000000;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #000000;
+            z-index: 10;
+        }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-900">
+<body class="bg-slate-100 text-slate-900 relative pb-16"> <!-- pb-16 para evitar solapamiento con footer -->
 
 <div id="app" class="min-h-screen flex flex-col md:flex-row">
     <!-- Sidebar -->
     <aside class="w-full md:w-80 bg-white border-r border-slate-300 flex flex-col shrink-0">
         <div class="p-6 border-b border-slate-200 flex items-center gap-3">
-            <div class="bg-red-600 p-2 rounded-lg text-white">
-                <i data-lucide="shield" class="w-6 h-6"></i>
-            </div>
+            <img src="https://res.cloudinary.com/dway4iqeh/image/upload/v1766758564/nexcore3_uvo6ca.png" alt="Infonex Logo" class="w-10 h-10 rounded-lg object-contain bg-gray-100">
             <div>
-                <h1 class="font-extrabold text-black text-lg leading-none uppercase tracking-tight">Securitas</h1>
+                <h1 class="font-extrabold text-black text-lg leading-none uppercase tracking-tight">Infonex</h1>
                 <p class="text-[10px] text-red-600 font-black tracking-widest uppercase mt-1">Minuta de Auditoría</p>
             </div>
         </div>
@@ -100,10 +116,16 @@
     </main>
 </div>
 
+<!-- Pie de página fijo -->
+<footer class="footer">
+    <img src="https://res.cloudinary.com/dway4iqeh/image/upload/v1766758564/nexcore3_uvo6ca.png" alt="Nexcore Logo" class="h-8">
+    <span>Soluciones Tecnologicas para empresas reales © 2025 NEXCORE TECH</span>
+</footer>
+
 <script>
     let activeTabId = 'general';
     let formData = {
-        general: { empresa: 'Securitas S.A.', instalacion: '', ciudad: '', fecha: new Date().toLocaleDateString('es-ES'), tecnico: '', elaborador: '' },
+        general: { empresa: 'Infonex S.A.', instalacion: '', ciudad: '', fecha: new Date().toLocaleDateString('es-ES'), tecnico: '', elaborador: '' },
         objetivos: { 
             principal: 'Evaluar integralmente las condiciones de seguridad física en servicio operativos, con el propósito de identificar vulnerabilidades, amenazas y el nivel de riesgo, para diseñar medidas de mitigación efectivas que aseguren la protección del personal, los activos críticos y la continuidad operativa de las instalaciones.',
             especificos: 'Detectar áreas críticas y sensibles dentro de las instalaciones.\nAnalizar amenazas de origen externo, interno y ambiental.\nEvaluar la eficacia de la seguridad física y tecnológica existente.\nElaborar un matriz de análisis de riesgos.\nProponer medidas de mitigación específicas y realistas.'
@@ -499,7 +521,7 @@
 
             const doc = new Document({ sections: [{ properties: {}, children }] });
             const blob = await Packer.toBlob(doc);
-            const filename = `Informe_Auditoria_${(formData.general.instalacion || 'Securitas').replace(/\s+/g, '_')}_${formData.general.fecha.replace(/\//g, '-')}.docx`;
+            const filename = `Informe_Auditoria_${(formData.general.instalacion || 'Infonex').replace(/\s+/g, '_')}_${formData.general.fecha.replace(/\//g, '-')}.docx`;
             saveAs(blob, filename);
 
         } catch (err) {
